@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './RegistrationTable.css';
 
-function RegistrationTable() {
+function RegistrationTable({ onRegistrationComplete }) {
   const [formData, setFormData] = useState({
     name: '',
     age: '',
@@ -19,7 +19,13 @@ function RegistrationTable() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    // Should be changed later
     console.log(formData);
+
+    // Simulating a delay of 2 seconds before marking the registration as complete. Should be changed later
+    setTimeout(() => {
+      onRegistrationComplete();
+    }, 2000);
   };
 
   return (
