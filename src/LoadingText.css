@@ -1,0 +1,30 @@
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+  
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+  
+.loading-letter {
+  font-family: 'Advent Pro', sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: #026981;
+  animation: fadeIn 0.5s forwards;
+}
+  
+.loading-letter.hide {
+  animation: fadeOut 0.5s forwards;
+  animation-delay: 0.5s;
+}
