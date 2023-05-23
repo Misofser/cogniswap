@@ -4,7 +4,7 @@ import './RegistrationTable.css';
 function RegistrationTable({ onRegistrationComplete }) {
   const [formData, setFormData] = useState({
     name: '',
-    age: '',
+    dateOfBirth: '',
     study: '',
     teach: ''
   });
@@ -46,8 +46,8 @@ function RegistrationTable({ onRegistrationComplete }) {
           Date of birth:
           <input
             type="date"
-            name="age"
-            value={formData.age}
+            name="dateOfBirth"
+            value={formData.dateOfBirth}
             onChange={handleInputChange}
             className="form-input"
           />
