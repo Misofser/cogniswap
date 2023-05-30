@@ -17,15 +17,31 @@ function RegistrationTable({ onRegistrationComplete }) {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Should be changed later
-    console.log(formData);
 
-    // Simulating a delay of 2 seconds before marking the registration as complete. Should be changed later
-    setTimeout(() => {
-      onRegistrationComplete();
-    }, 2000);
+    try {
+      const response = await fetch('http://localhost:3001/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+        mode: 'no-cors', // Enable no-cors mode
+      });
+
+      if (response.ok) {
+        // Registration successful
+        console.log('Registration successful');
+        // Call the onRegistrationComplete function or perform any other necessary actions
+        onRegistrationComplete();
+      } else {
+        // Registration failed
+        console.log('Registration failed');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -74,7 +90,7 @@ function RegistrationTable({ onRegistrationComplete }) {
             className="form-input"
           />
         </label>
-
+        
         <p>Are you ready to start?</p>
         <button type="submit" className="form-submit">Yes</button>
       </form>
