@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
 import './RegistrationTable.css';
+import Box from '@mui/material/Box';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import Chip from '@mui/material/Chip';
 
 function RegistrationTable({ onRegistrationComplete }) {
+
   const [formData, setFormData] = useState({
     name: '',
     dateOfBirth: '',
-    study: '',
-    teach: ''
+    study: [],
+    teach: []
   });
+
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -17,8 +26,30 @@ function RegistrationTable({ onRegistrationComplete }) {
     }));
   };
 
+  const handleStudyChange = (event) => {
+    const { value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      study: value
+    }));
+  };
+
+
+  const handleTeachChange = (event) => {
+    const { value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      teach: value
+    }));
+  };
+
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!formData.name || !formData.dateOfBirth || !formData.study || !formData.teach) {
+      setErrorMessage('Please fill in all fields');
+      return;
+    }
 
     try {
       const response = await fetch('http://localhost:3001/api/register', {
@@ -27,7 +58,6 @@ function RegistrationTable({ onRegistrationComplete }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
-        mode: 'no-cors', // Enable no-cors mode
       });
 
       if (response.ok) {
@@ -46,6 +76,7 @@ function RegistrationTable({ onRegistrationComplete }) {
 
   return (
     <div className="form-container">
+      {errorMessage && (<p className="error-message">{errorMessage}</p>)}
       <form onSubmit={handleSubmit}>
          <label className="form-label">
           Name:
@@ -68,28 +99,58 @@ function RegistrationTable({ onRegistrationComplete }) {
             className="form-input"
           />
         </label>
+   
+        <div>
+          <label className="form-label">
+            What do you want to study?
+          </label>
+          <FormControl variant="outlined" className="form-input">
+            <Select
+              multiple
+              value={formData.study}
+              onChange={handleStudyChange}
+              input={<OutlinedInput />}
+              renderValue={(selected) => (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {selected.map((value) => (
+                    <Chip key={value} label={value} />
+                  ))}
+                </Box>
+              )}
+            >
+              <MenuItem value="English">English</MenuItem>
+              <MenuItem value="French">French</MenuItem>
+              <MenuItem value="Spanish">Spanish</MenuItem>
+              <MenuItem value="Georgian">Georgian</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
 
-        <label className="form-label">
-          What do you want to study?
-          <input
-            type="text"
-            name="study"
-            value={formData.study}
-            onChange={handleInputChange}
-            className="form-input"
-          />
-        </label>
-
-        <label className="form-label">
-          What are you ready to teach?
-          <input
-            type="text"
-            name="teach"
-            value={formData.teach}
-            onChange={handleInputChange}
-            className="form-input"
-          />
-        </label>
+        <div>
+          <label className="form-label">
+            What do you want to teach?
+          </label>
+          <FormControl variant="outlined" className="form-input">
+            <Select
+              multiple
+              value={formData.teach}
+              onChange={handleTeachChange}
+              input={<OutlinedInput />}
+              renderValue={(selected) => (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {selected.map((value) => (
+                    <Chip key={value} label={value} />
+                  ))}
+                </Box>
+              )}
+            >
+              <MenuItem value="History">History</MenuItem>
+              <MenuItem value="Italian">Italian</MenuItem>
+              <MenuItem value="Design">Design</MenuItem>
+              <MenuItem value="Drawing">Drawing</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
         
         <p>Are you ready to start?</p>
         <button type="submit" className="form-submit">Yes</button>

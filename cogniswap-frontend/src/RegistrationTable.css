@@ -31,3 +31,9 @@
   background-color: #09a0bb;
 }
   
+.error-message {
+  background-color: #ff7e7e;
+  color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+}
