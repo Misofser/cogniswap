@@ -7,7 +7,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
 
-function RegistrationTable({ onRegistrationComplete }) {
+function RegistrationTable({ onRegistrationComplete, setLoading }) {
 
   const [formData, setFormData] = useState({
     name: '',
@@ -43,13 +43,14 @@ function RegistrationTable({ onRegistrationComplete }) {
     }));
   };
 
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!formData.name || !formData.dateOfBirth || !formData.study || !formData.teach) {
       setErrorMessage('Please fill in all fields');
       return;
     }
+
+    setLoading(true);
 
     try {
       const response = await fetch('http://localhost:3001/api/register', {
@@ -61,16 +62,36 @@ function RegistrationTable({ onRegistrationComplete }) {
       });
 
       if (response.ok) {
-        // Registration successful
         console.log('Registration successful');
-        // Call the onRegistrationComplete function or perform any other necessary actions
-        onRegistrationComplete();
+        const data = await response.json();
+        const userId = data.userId;
+        console.log('Received user ID:', userId);
+
+        const intervalId = setInterval(async () => {
+          try {
+            const statusResponse = await fetch(`http://localhost:3001/api/status/${userId}`, {
+              method: 'GET',
+          });
+            if (statusResponse.ok) {
+              const statusData = await statusResponse.json();
+              const { matched, roomId } = statusData;
+
+              if (matched) {
+                clearInterval(intervalId);
+                onRegistrationComplete(roomId);
+              }
+            } else {
+              // Handle status request error
+            }
+          } catch (error) {
+            // Handle status request error
+          }
+        }, 500);
       } else {
-        // Registration failed
-        console.log('Registration failed');
+        // Handle registration failed
       }
     } catch (error) {
-      console.error('Error:', error);
+      // Handle registration error
     }
   };
 
@@ -122,6 +143,10 @@ function RegistrationTable({ onRegistrationComplete }) {
               <MenuItem value="French">French</MenuItem>
               <MenuItem value="Spanish">Spanish</MenuItem>
               <MenuItem value="Georgian">Georgian</MenuItem>
+              <MenuItem value="History">History</MenuItem>
+              <MenuItem value="Italian">Italian</MenuItem>
+              <MenuItem value="Design">Design</MenuItem>
+              <MenuItem value="Drawing">Drawing</MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -148,6 +173,10 @@ function RegistrationTable({ onRegistrationComplete }) {
               <MenuItem value="Italian">Italian</MenuItem>
               <MenuItem value="Design">Design</MenuItem>
               <MenuItem value="Drawing">Drawing</MenuItem>
+              <MenuItem value="English">English</MenuItem>
+              <MenuItem value="French">French</MenuItem>
+              <MenuItem value="Spanish">Spanish</MenuItem>
+              <MenuItem value="Georgian">Georgian</MenuItem>
             </Select>
           </FormControl>
         </div>

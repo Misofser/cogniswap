@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import LoadingScreen from './LoadingScreen';
 import RegistrationTable from './RegistrationTable';
 import Navbar from './Navbar';
-import LoadingScreen from './LoadingScreen';
 import VideoChat from './VideoChat';
 
 function App() {
   const [isRegistered, setIsRegistered] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [roomId, setRoomId] = useState('');
 
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 6000);
-  }, []);
 
-  const handleRegistrationComplete = () => {
+  const handleRegistrationComplete = (roomId) => {
     setIsRegistered(true);
+    setRoomId(roomId);
+    setLoading(false);
+    console.log('Received roomId:', roomId);
   };
+
+  console.log('loading:', loading);
 
   return (
     <div className="app">
@@ -25,13 +26,16 @@ function App() {
       {isRegistered ? (
         <>
           {loading ? (
+            <>
+            {console.log('LoadingScreen is rendered:', loading)}
             <LoadingScreen />
+            </>
           ) : (
-            <VideoChat />
+            <VideoChat roomId={roomId} />
           )}
         </>
       ) : (
-        <RegistrationTable onRegistrationComplete={handleRegistrationComplete} />
+        <RegistrationTable onRegistrationComplete={handleRegistrationComplete} setLoading={setLoading} />
       )}
     </div>
   );

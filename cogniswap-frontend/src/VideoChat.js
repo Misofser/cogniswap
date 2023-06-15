@@ -1,12 +1,12 @@
 import { JitsiMeeting } from '@jitsi/react-sdk';
 import './VideoChat.css';
 
-function VideoChat() {
+function VideoChat({ roomId }) {
   return (
     <div className="video-chat">
       <JitsiMeeting
         domain={process.env.JITSI_DOMAIN}
-        roomName="my-room"
+        roomName={roomId}
         configOverwrite={{
             startWithAudioMuted: false,
             disableModeratorIndicator: false,
