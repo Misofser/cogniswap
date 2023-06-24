@@ -11,29 +11,26 @@ function App() {
   const [roomId, setRoomId] = useState('');
 
 
-  const handleRegistrationComplete = (roomId) => {
+  const handleRegistrationComplete = async (roomId) => {
     setIsRegistered(true);
     setRoomId(roomId);
     setLoading(false);
     console.log('Received roomId:', roomId);
   };
 
-  console.log('loading:', loading);
+  useEffect(() => {
+    console.log('loading:', loading);
+  }, [loading]);
+
+  console.log('isRegistered:', isRegistered);
 
   return (
     <div className="app">
       <Navbar />
-      {isRegistered ? (
-        <>
-          {loading ? (
-            <>
-            {console.log('LoadingScreen is rendered:', loading)}
-            <LoadingScreen />
-            </>
-          ) : (
-            <VideoChat roomId={roomId} />
-          )}
-        </>
+      {loading ? (
+        <LoadingScreen />
+      ) : isRegistered ? (
+        <VideoChat roomId={roomId} />
       ) : (
         <RegistrationTable onRegistrationComplete={handleRegistrationComplete} setLoading={setLoading} />
       )}

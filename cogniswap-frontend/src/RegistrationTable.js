@@ -78,6 +78,7 @@ function RegistrationTable({ onRegistrationComplete, setLoading }) {
 
               if (matched) {
                 clearInterval(intervalId);
+                setLoading(false);
                 onRegistrationComplete(roomId);
               }
             } else {
