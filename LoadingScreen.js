@@ -1,12 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import LoadingText from './LoadingText';
 
 function LoadingScreen() {
   return (
     <View style={styles.loadingScreen}>
       <LoadingText />
-      {/* <Text>Loading...</Text> */}
     </View>
   );
 }

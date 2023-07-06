@@ -20,6 +20,7 @@ const App = () => {
   console.log('isRegistered:', isRegistered);
 
   return (
+    
     <View style={styles.container}>
       <Navbar />
       {loading ? (
