@@ -1,11 +1,43 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
 
+const SERVER_URL = process.env.EXPO_PUBLIC_SERVER_URL;
+
 const RegistrationTable = ({ onRegistrationComplete, setLoading }) => {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    name: '',
+    dateOfBirth: '',
+    study: [],
+    teach: []
+  });
+
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = () => {
+  const handleInputChange = (name, value) => {
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      [name]: value
+    }));
+  };
+
+  const handleStudyChange = (value) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      study: value.split(',').map(item => item.trim()) // Split the input string by commas and trim whitespace for each element
+    }));
+  };
+  
+  const handleTeachChange = (value) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      teach: value.split(',').map(item => item.trim()) // Split the input string by commas and trim whitespace for each element
+    }));
+  };
+
+  const handleSubmit = async () => {
+    
+    console.log("handleSubmit", JSON.stringify(formData))
+    
     if (!formData.name || !formData.dateOfBirth || !formData.study || !formData.teach) {
       setErrorMessage('Please fill in all fields');
       return;
@@ -13,13 +45,49 @@ const RegistrationTable = ({ onRegistrationComplete, setLoading }) => {
 
     setLoading(true);
 
-    // Perform registration logic and handle success/error
+    try {
+      const response = await fetch(`${SERVER_URL}/api/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
 
-    // Simulate registration success after a delay (replace with your actual registration logic)
-    setTimeout(() => {
-      setLoading(false);
-      onRegistrationComplete('roomId123'); // Pass the generated roomId
-    }, 2000);
+      if (response.ok) {
+        console.log('Registration successful');
+        const data = await response.json();
+        const userId = data.userId;
+        console.log('Received user ID:', userId);
+
+        const intervalId = setInterval(async () => {
+          try {
+            const statusResponse = await fetch(`${SERVER_URL}/api/status/${userId}`, {
+              method: 'GET'
+            });
+
+            if (statusResponse.ok) {
+              const statusData = await statusResponse.json();
+              const { matched, roomId } = statusData;
+
+              if (matched) {
+                clearInterval(intervalId);
+                setLoading(false);
+                onRegistrationComplete(roomId);
+              }
+            } else {
+              // Handle status request error
+            }
+          } catch (error) {
+            // Handle status request error
+          }
+        }, 500);
+      } else {
+        // Handle registration failed
+      }
+    } catch (error) {
+      // Handle registration error
+    }
   };
 
   return (
@@ -28,22 +96,27 @@ const RegistrationTable = ({ onRegistrationComplete, setLoading }) => {
       <TextInput
         style={styles.input}
         placeholder="Name"
-        onChangeText={(text) => setFormData({ ...formData, name: text })}
+        value={formData.name}
+        onChangeText={value => handleInputChange('name', value)}
       />
       <TextInput
         style={styles.input}
         placeholder="Date of Birth"
-        onChangeText={(text) => setFormData({ ...formData, dateOfBirth: text })}
+        value={formData.dateOfBirth}
+        onChangeText={value => handleInputChange('dateOfBirth', value)}
       />
       <TextInput
         style={styles.input}
         placeholder="What do you want to study?"
-        onChangeText={(text) => setFormData({ ...formData, study: text })}
+        value={formData.study.join(', ')}
+        onChangeText={handleStudyChange}
       />
+
       <TextInput
         style={styles.input}
         placeholder="What do you want to teach?"
-        onChangeText={(text) => setFormData({ ...formData, teach: text })}
+        value={formData.teach.join(', ')}
+        onChangeText={handleTeachChange}
       />
       <Button title="Submit" onPress={handleSubmit} />
     </View>
