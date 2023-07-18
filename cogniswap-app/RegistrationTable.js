@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const SERVER_URL = process.env.EXPO_PUBLIC_SERVER_URL;
 
@@ -12,6 +13,10 @@ const RegistrationTable = ({ onRegistrationComplete, setLoading }) => {
   });
 
   const [errorMessage, setErrorMessage] = useState('');
+
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [textInputValue, setTextInputValue] = useState('');
 
   const handleInputChange = (name, value) => {
     setFormData(prevFormData => ({
@@ -32,6 +37,13 @@ const RegistrationTable = ({ onRegistrationComplete, setLoading }) => {
       ...prevFormData,
       teach: value.split(',').map(item => item.trim()) // Split the input string by commas and trim whitespace for each element
     }));
+  };
+
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || new Date();
+    setShowDatePicker(Platform.OS === 'ios');
+    setSelectedDate(currentDate); // Save the selected date in the state
+    handleInputChange('dateOfBirth', currentDate.toISOString().split('T')[0]); // Update formData.dateOfBirth with selected date
   };
 
   const handleSubmit = async () => {
@@ -99,12 +111,22 @@ const RegistrationTable = ({ onRegistrationComplete, setLoading }) => {
         value={formData.name}
         onChangeText={value => handleInputChange('name', value)}
       />
+      
       <TextInput
         style={styles.input}
         placeholder="Date of Birth"
-        value={formData.dateOfBirth}
-        onChangeText={value => handleInputChange('dateOfBirth', value)}
+        value={formData.dateOfBirth} // Display dateOfBirth in the TextInput
+        onFocus={() => setShowDatePicker(true)}
       />
+      {showDatePicker && (
+        <DateTimePicker
+          value={selectedDate}
+          mode="date"
+          display="default"
+          onChange={handleDateChange}
+        />
+      )}
+
       <TextInput
         style={styles.input}
         placeholder="What do you want to study?"
