@@ -32,17 +32,17 @@ const Navbar = () => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 60,
+    height: 48,
     backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 36,
-    borderBottomWidth: 1,
-    borderBottomColor: '#CCC',
+    // borderBottomWidth: 1,
+    // borderBottomColor: '#CCC',
     elevation: 2,
   },
   title: {
-    fontSize: 30,
+    fontSize: 25,
     color: '#02809c',
     fontFamily: 'AdventPro-ExtraBold',
   },

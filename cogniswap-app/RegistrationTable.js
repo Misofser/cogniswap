@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import CustomTextField from './CustomTextField';
 
 const SERVER_URL = process.env.EXPO_PUBLIC_SERVER_URL;
 
@@ -16,26 +17,11 @@ const RegistrationTable = ({ onRegistrationComplete, setLoading }) => {
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [textInputValue, setTextInputValue] = useState('');
 
   const handleInputChange = (name, value) => {
     setFormData(prevFormData => ({
       ...prevFormData,
       [name]: value
-    }));
-  };
-
-  const handleStudyChange = (value) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      study: value.split(',').map(item => item.trim()) // Split the input string by commas and trim whitespace for each element
-    }));
-  };
-  
-  const handleTeachChange = (value) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      teach: value.split(',').map(item => item.trim()) // Split the input string by commas and trim whitespace for each element
     }));
   };
 
@@ -105,16 +91,23 @@ const RegistrationTable = ({ onRegistrationComplete, setLoading }) => {
   return (
     <View style={styles.container}>
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Name:</Text>
+      </View>
       <TextInput
         style={styles.input}
-        placeholder="Name"
+        placeholder="Alexander Smith"
         value={formData.name}
         onChangeText={value => handleInputChange('name', value)}
       />
-      
+
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Date of birth:</Text>
+      </View>
       <TextInput
         style={styles.input}
-        placeholder="Date of Birth"
+        placeholder="2000-01-01"
         value={formData.dateOfBirth} // Display dateOfBirth in the TextInput
         onFocus={() => setShowDatePicker(true)}
       />
@@ -127,20 +120,24 @@ const RegistrationTable = ({ onRegistrationComplete, setLoading }) => {
         />
       )}
 
-      <TextInput
-        style={styles.input}
-        placeholder="What do you want to study?"
-        value={formData.study.join(', ')}
-        onChangeText={handleStudyChange}
+      <CustomTextField
+        title="What do you want to study?"
+        chips={formData.study}
+        setChips={(chips) => handleInputChange('study', chips)}
+        suggestedChips={['Math', 'Programming', 'Artificial Intelligence (AI)', 'English', 'Spanish', 'German', 'Georgian', 'Science', 'History', 'Art']} // Add suggested chips here
       />
 
-      <TextInput
-        style={styles.input}
-        placeholder="What do you want to teach?"
-        value={formData.teach.join(', ')}
-        onChangeText={handleTeachChange}
+      <CustomTextField
+        title="What do you want to teach?"
+        chips={formData.teach}
+        setChips={(chips) => handleInputChange('teach', chips)}
+        suggestedChips={['Math', 'Programming', 'Artificial Intelligence (AI)', 'English', 'Spanish', 'German', 'Georgian', 'Science', 'History', 'Art']} // Add suggested chips here
       />
-      <Button title="Submit" onPress={handleSubmit} />
+
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Are you ready to start?</Text>
+      </View>
+      <Button title="Yes" onPress={handleSubmit} />
     </View>
   );
 };
@@ -149,7 +146,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: "center", 
+  },
+  titleContainer: {
+    marginLeft: 30,
+    alignSelf: 'flex-start', // Align the title to the left
+    marginBottom: 8,
+  },
+  title: {
+    textAlign: 'left',
   },
   input: {
     width: '86%',
@@ -157,7 +162,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 5,
-    marginBottom: 20,
+    marginBottom: 8,
     paddingHorizontal: 10,
   },
 
