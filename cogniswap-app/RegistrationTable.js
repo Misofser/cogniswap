@@ -134,10 +134,9 @@ const RegistrationTable = ({ onRegistrationComplete, setLoading }) => {
         suggestedChips={['Math', 'Programming', 'Artificial Intelligence (AI)', 'English', 'Spanish', 'German', 'Georgian', 'Science', 'History', 'Art']} // Add suggested chips here
       />
 
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>Are you ready to start?</Text>
+      <View style={styles.buttonContainer}>
+        <Button style={styles.button} title="I am ready to start" onPress={handleSubmit} />
       </View>
-      <Button title="Yes" onPress={handleSubmit} />
     </View>
   );
 };
@@ -146,16 +145,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: "center", 
+    alignItems: 'center',
   },
   titleContainer: {
-    marginLeft: 30,
-    alignSelf: 'flex-start', // Align the title to the left
+    width: '86%', // Set the width to 86% of the available space
     marginBottom: 8,
   },
   title: {
     textAlign: 'left',
+    width: '86%',
   },
+  
+  buttonContainer: {
+    width: '86%',
+    marginTop: 20, // Adjust this value to set the distance between the form and the button
+  },
+
   input: {
     width: '86%',
     height: 50,
