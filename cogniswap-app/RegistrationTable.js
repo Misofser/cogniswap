@@ -18,6 +18,8 @@ const RegistrationTable = ({ onRegistrationComplete, setLoading }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  const [ageError, setAgeError] = useState('');
+
   const handleInputChange = (name, value) => {
     setFormData(prevFormData => ({
       ...prevFormData,
@@ -25,11 +27,32 @@ const RegistrationTable = ({ onRegistrationComplete, setLoading }) => {
     }));
   };
 
+  // const handleDateChange = (event, selectedDate) => {
+  //   const currentDate = selectedDate || new Date();
+  //   setShowDatePicker(Platform.OS === 'ios');
+  //   setSelectedDate(currentDate); // Save the selected date in the state
+  //   handleInputChange('dateOfBirth', currentDate.toISOString().split('T')[0]); // Update formData.dateOfBirth with selected date
+  // };
+
   const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || new Date();
-    setShowDatePicker(Platform.OS === 'ios');
-    setSelectedDate(currentDate); // Save the selected date in the state
-    handleInputChange('dateOfBirth', currentDate.toISOString().split('T')[0]); // Update formData.dateOfBirth with selected date
+    setShowDatePicker(false);
+    if (selectedDate) {
+      setSelectedDate(selectedDate);
+      setFormData({ ...formData, dateOfBirth: selectedDate.toISOString().split('T')[0] });
+    }
+  };
+
+  const isUnderage = (birthDate) => {
+    const today = new Date();
+    const dob = new Date(birthDate);
+    const age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+  
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
+  
+    return age < 18;
   };
 
   const handleSubmit = async () => {
@@ -38,6 +61,11 @@ const RegistrationTable = ({ onRegistrationComplete, setLoading }) => {
     
     if (!formData.name || !formData.dateOfBirth || !formData.study || !formData.teach) {
       setErrorMessage('Please fill in all fields');
+      return;
+    }
+
+    if (isUnderage(formData.dateOfBirth)) {
+      setAgeError('You must be at least 18 years old to register');
       return;
     }
 
@@ -119,6 +147,8 @@ const RegistrationTable = ({ onRegistrationComplete, setLoading }) => {
           onChange={handleDateChange}
         />
       )}
+
+      {ageError ? <Text style={styles.errorText}>{ageError}</Text> : null}
 
       <CustomTextField
         title="What do you want to study?"
