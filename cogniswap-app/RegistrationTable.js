@@ -27,13 +27,6 @@ const RegistrationTable = ({ onRegistrationComplete, setLoading }) => {
     }));
   };
 
-  // const handleDateChange = (event, selectedDate) => {
-  //   const currentDate = selectedDate || new Date();
-  //   setShowDatePicker(Platform.OS === 'ios');
-  //   setSelectedDate(currentDate); // Save the selected date in the state
-  //   handleInputChange('dateOfBirth', currentDate.toISOString().split('T')[0]); // Update formData.dateOfBirth with selected date
-  // };
-
   const handleDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
     if (selectedDate) {
@@ -59,7 +52,7 @@ const RegistrationTable = ({ onRegistrationComplete, setLoading }) => {
     
     console.log("handleSubmit", JSON.stringify(formData))
     
-    if (!formData.name || !formData.dateOfBirth || !formData.study || !formData.teach) {
+    if (!formData.name || !formData.dateOfBirth || formData.study.length === 0 || formData.teach.length === 0) {
       setErrorMessage('Please fill in all fields');
       return;
     }
